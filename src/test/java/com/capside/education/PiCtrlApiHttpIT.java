@@ -3,10 +3,12 @@ package com.capside.education;
 
 import com.jayway.jsonpath.JsonPath;
 import java.math.BigDecimal;
+import lombok.extern.slf4j.Slf4j;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -24,10 +26,13 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@Slf4j
 public class PiCtrlApiHttpIT {
-    private static final String PATH = "/pi?iterations=%s";
+    private static final String PATH = "http://localhost:%d/pi?iterations=%s";
     
+    @LocalServerPort
+    private int serverPort;
     @Autowired
     private TestRestTemplate restTemplate;
     
@@ -37,7 +42,8 @@ public class PiCtrlApiHttpIT {
         headers.setContentType(MediaType.APPLICATION_JSON);
         
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        String url = String.format(PATH, 10);
+        String url = String.format(PATH, serverPort, 10);
+        log.info("Checking {}.", serverPort);
         ResponseEntity<String> response = 
                 restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         
