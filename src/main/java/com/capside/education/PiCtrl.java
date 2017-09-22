@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class PiCtrl {
 
-    private PiCalculator calculator;
+    private final PiCalculator calculator;
 
     @Autowired
     public PiCtrl(PiCalculator calculator) {
