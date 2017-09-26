@@ -8,7 +8,7 @@ node {
     stage("push") {
         withCredentials([[
             $class: 'UsernamePasswordMultiBinding', 
-             credentialsId: 'ciberado_docker_hub',
+             credentialsId: 'docker_hub',
              usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD'
         ]]) {
             sh "docker login -u $USERNAME -p $PASSWORD"
