@@ -4,8 +4,6 @@ pipeline {
     }
 	
     stages {
-		def app
-        
 		stage('Test') {
             steps {
                 sh 'mvn clean test'
@@ -18,7 +16,7 @@ pipeline {
         }
         stage('Image') {
             steps {
-                app = docker.build("ciberado/picalculator")
+                def app = docker.build("ciberado/picalculator")
             }
         }
     }
