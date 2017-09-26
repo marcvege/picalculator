@@ -1,23 +1,18 @@
-pipeline {
-    agent {
-        docker { image 'maven:alpine' }
+node {
+    stage("scm") {
+        git url: 'https://github.com/ciberado/picalculator'
     }
-	
-    stages {
-		stage('Test') {
-            steps {
-                sh 'mvn clean test'
-            }
-        }
-        stage('Build') {
-            steps {
-                sh 'mvn package -DskipTests'
-            }
-        }
-        stage('Image') {
-            steps {
-                docker.build("ciberado/picalculator")
-            }
+    stage("test and build") {
+        sh "docker build -t ciberado/picalculator ."
+    }
+    stage("push") {
+        withCredentials([[
+            $class: 'UsernamePasswordMultiBinding', 
+             credentialsId: 'ciberado_docker_hub',
+             usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD'
+        ]]) {
+            sh "docker login -u $USERNAME -p $PASSWORD"
+            sh "docker push ciberado/picalculator"
         }
     }
 }
