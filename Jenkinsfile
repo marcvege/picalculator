@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Image') {
             steps {
-                sh 'docker build -t picalculator:${BUILD_NUMBER}  .'
+                app = docker.build("ciberado/picalculator")
             }
         }
     }
