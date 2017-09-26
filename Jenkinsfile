@@ -2,8 +2,11 @@ pipeline {
     agent {
         docker { image 'maven:alpine' }
     }
+	
     stages {
-        stage('Test') {
+		def app
+        
+		stage('Test') {
             steps {
                 sh 'mvn clean test'
             }
