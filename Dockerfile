@@ -1,6 +1,18 @@
-FROM frolvlad/alpine-oraclejdk8:slim
-VOLUME /tmp
-ADD target/picalculatorwebservice*.jar app.jar
-RUN sh -c 'touch /app.jar'
-ENV JAVA_OPTS=""
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
+FROM maven:alpine AS builder
+MAINTAINER javi@programar.cloud
+
+ADD . /app
+WORKDIR /app
+
+RUN mvn clean package
+
+# ------------------------------------------------------
+
+FROM java:8-jdk-alpine
+MAINTAINER javi@programar.cloud
+
+COPY --from=builder /app/target/*.jar /usr/share/app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["/usr/bin/java", "-jar", "/usr/share/app.jar"]
